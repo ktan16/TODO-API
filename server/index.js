@@ -80,7 +80,7 @@ app.get("/lists/:list_id", async (req, res) => {
 // PUT: update todo item, mark it as done
 /*
 {
-  "todo_id": = todo id,
+  "todo_id": todo id,
   "todo_name": name of todo,
   "list_name": name of list
 }
@@ -103,7 +103,7 @@ app.put("/lists/:list_id", async (req, res) => {
 // DELETE: delete todo item from list
 /*
 {
-  "todo_id": = todo id,
+  "todo_id": todo id,
   "todo_name": name of todo,
   "list_name": name of list
 }
