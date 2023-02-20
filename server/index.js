@@ -77,17 +77,12 @@ app.get("/lists/:list_id", async (req, res) => {
 });
 
 // PUT: update todo item, mark it as done
-/*
-{
-  "todo_id": todo id
-}
-*/
-app.put("/lists/:list_id", async (req, res) => {
+app.put("/lists/:list_id/:todo_id", async (req, res) => {
   try {
-    const data = req.body;
+    const { todo_id } = req.params;
     const updateTodo = await pool.query(
       "UPDATE todoitems SET done = $1 WHERE todo_id = $2",
-      [1, data.todo_id]
+      [1, todo_id]
     );
 
     res.json(`Todo item is marked as done.`);
@@ -97,17 +92,12 @@ app.put("/lists/:list_id", async (req, res) => {
 });
 
 // DELETE: delete todo item from list
-/*
-{
-  "todo_id": todo id
-}
-*/
-app.delete("/lists/:list_id", async (req, res) => {
+app.delete("/lists/:list_id/:todo_id", async (req, res) => {
   try {
-    const data = req.body;
+    const { todo_id } = req.params;
     const deleteItem = await pool.query(
       "DELETE FROM todoitems WHERE todo_id = $1",
-      [data.todo_id]
+      [todo_id]
     );
 
     res.json(`Todo item was deleted.`);
@@ -117,22 +107,17 @@ app.delete("/lists/:list_id", async (req, res) => {
 });
 
 // DELETE: delete todo list
-/*
-{
-  "list_id": list id
-}
-*/
-app.delete("/lists", async (req, res) => {
+app.delete("/lists/:list_id", async (req, res) => {
   try {
-    const data = req.body;
+    const { list_id } = req.params;
 
     const deleteList = await pool.query(
       "DELETE FROM todolists WHERE list_id = $1",
-      [data.list_id]
+      [list_id]
     );
     const deleteItem = await pool.query(
       "DELETE FROM todoitems WHERE list_id = $1",
-      [data.list_id]
+      [list_id]
     );
 
     res.json(`Todo list was deleted.`);
