@@ -43,8 +43,7 @@ app.get("/lists", async(req, res) => {
 // POST: create todo item for list
 /*
 {
-  "todo_name": todo item name,
-  "done": done = 1, not done = 0
+  "todo_name": todo item name
 }
 */
 app.post("/lists/:list_id", async (req, res) => {
@@ -53,7 +52,7 @@ app.post("/lists/:list_id", async (req, res) => {
     const data = req.body;
     const newTodo = await pool.query(
       "INSERT INTO todoitems (list_id, name, done) VALUES($1, $2, $3) RETURNING *",
-      [list_id, data.todo_name, data.done]
+      [list_id, data.todo_name, 0]
     );
 
     res.json(newTodo.rows[0]);
@@ -80,21 +79,18 @@ app.get("/lists/:list_id", async (req, res) => {
 // PUT: update todo item, mark it as done
 /*
 {
-  "todo_id": todo id,
-  "todo_name": name of todo,
-  "list_name": name of list
+  "todo_id": todo id
 }
 */
 app.put("/lists/:list_id", async (req, res) => {
   try {
-    const { list_id } = req.params;
     const data = req.body;
     const updateTodo = await pool.query(
       "UPDATE todoitems SET done = $1 WHERE todo_id = $2",
       [1, data.todo_id]
     );
 
-    res.json(`Todo item ${data.todo_name} from list ${list_id} ${data.list_name} is marked as done.`);
+    res.json(`Todo item is marked as done.`);
   } catch (err) {
     console.error(err.message);
   }
@@ -103,21 +99,18 @@ app.put("/lists/:list_id", async (req, res) => {
 // DELETE: delete todo item from list
 /*
 {
-  "todo_id": todo id,
-  "todo_name": name of todo,
-  "list_name": name of list
+  "todo_id": todo id
 }
 */
 app.delete("/lists/:list_id", async (req, res) => {
   try {
-    const { list_id } = req.params;
     const data = req.body;
     const deleteItem = await pool.query(
       "DELETE FROM todoitems WHERE todo_id = $1",
       [data.todo_id]
     );
 
-    res.json(`Todo item ${data.todo_name} from list ${list_id}: ${data.list_name} was deleted.`);
+    res.json(`Todo item was deleted.`);
   } catch (err) {
     console.error(err.message);
   }
@@ -126,8 +119,7 @@ app.delete("/lists/:list_id", async (req, res) => {
 // DELETE: delete todo list
 /*
 {
-  "list_id": list id,
-  "list_name": name of list
+  "list_id": list id
 }
 */
 app.delete("/lists", async (req, res) => {
@@ -143,7 +135,7 @@ app.delete("/lists", async (req, res) => {
       [data.list_id]
     );
 
-    res.json(`Todo list ${data.list_id}: ${data.list_name} was deleted.`);
+    res.json(`Todo list was deleted.`);
   } catch (err) {
     console.error(err.message);
   }
