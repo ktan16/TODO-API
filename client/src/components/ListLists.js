@@ -3,8 +3,9 @@ import React, { Fragment, useEffect, useState } from "react";
 const ListLists = () => {
   const [lists, setLists] = useState([]);
   const [todos, setTodos] = useState([]);
-
-  // list all todos of list
+  const [todoName, setTodoName] = useState("");
+  
+  // get todos for a list
   const getTodos = async (list_id) => {
     try {
       const response = await fetch(`http://localhost:5000/lists/${list_id}`);
@@ -13,6 +14,26 @@ const ListLists = () => {
       console.log(jsonData);
 
       setTodos(jsonData);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  // create todo for list
+  const createTodo = async (e, list_id) => {
+    
+    e.preventDefault();
+
+    try {
+      const body = { todoName };
+      const response = await fetch (`http://localhost:5000/lists/${list_id}`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(body)
+      });
+
+      console.log(response);
+      getTodos(list_id);
     } catch (error) {
       console.error(error.message);
     }
@@ -85,11 +106,11 @@ const ListLists = () => {
             <tr key ={list.list_id}>
               <td>{list.name}</td>
               <td>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onClick={() => getTodos(list.list_id)}>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target={`#id${list.list_id}`} onClick={() => getTodos(list.list_id)}>
                   View List
                 </button>
 
-                <div class="modal" id="myModal">
+                <div class="modal" id={`id${list.list_id}`}>
                   <div class="modal-dialog">
                     <div class="modal-content">
 
@@ -109,7 +130,7 @@ const ListLists = () => {
                           </thead>
                           <tbody>
                             {todos.map (todo => (
-                              <tr>
+                              <tr key ={todo.todo_id}>
                                 <td>{todo.name}</td>
                                 <td>{todo.done}</td>
                                 <td>
@@ -127,7 +148,21 @@ const ListLists = () => {
                       </div>
 
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        <form className="d-flex">
+                          <input
+                            type="text" 
+                            className="form-control" 
+                            value = {todoName}
+                            onChange={e => setTodoName(e.target.value)}
+                          />
+                          <button
+                            type="button"
+                            class="btn btn-success"
+                            onClick = {e => createTodo(e, list.list_id)}
+                          >
+                            Add
+                          </button>
+                        </form>
                       </div>
 
                     </div>
